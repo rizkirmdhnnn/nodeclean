@@ -80,10 +80,11 @@ func newModel(opts options) model {
 	sp.Spinner = spinner.Dot
 	sp.Style = cursorStyle
 	return model{
-		opts:    opts,
-		state:   stateScanning,
-		spinner: sp,
-		scanned: &atomic.Int64{},
+		opts:       opts,
+		state:      stateScanning,
+		spinner:    sp,
+		scanned:    &atomic.Int64{},
+		sortBySize: true, // biggest space hogs first by default
 	}
 }
 

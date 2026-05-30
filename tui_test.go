@@ -80,15 +80,27 @@ func TestToggleAndSelectAll(t *testing.T) {
 	}
 }
 
-func TestSortBySize(t *testing.T) {
+func TestDefaultsToSortBySize(t *testing.T) {
 	m := newModel(options{})
 	m = send(m, scanDoneMsg{targets: sampleTargets()})
-	m = send(m, key("s")) // sort by size desc
 	if !m.sortBySize {
-		t.Fatal("sortBySize should be true")
+		t.Fatal("sortBySize should default to true")
 	}
+	// Biggest first, smallest last.
 	if m.items[0].size != 300 || m.items[2].size != 100 {
 		t.Errorf("not sorted by size desc: %v", []int64{m.items[0].size, m.items[1].size, m.items[2].size})
+	}
+}
+
+func TestSortToggleToPath(t *testing.T) {
+	m := newModel(options{})
+	m = send(m, scanDoneMsg{targets: sampleTargets()})
+	m = send(m, key("s")) // toggle off size -> sort by path asc
+	if m.sortBySize {
+		t.Fatal("sortBySize should be false after toggle")
+	}
+	if m.items[0].path != "/a/node_modules" || m.items[2].path != "/c/node_modules" {
+		t.Errorf("not sorted by path asc: %v", []string{m.items[0].path, m.items[1].path, m.items[2].path})
 	}
 }
 
